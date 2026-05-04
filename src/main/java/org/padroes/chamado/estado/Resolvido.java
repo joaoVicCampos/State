@@ -24,7 +24,7 @@ public final class Resolvido implements EstadoChamado {
 
     @Override
     public void fechar(Chamado chamado) {
-        throw new IllegalStateException("Estado FECHADO sera implementado na proxima etapa");
+        chamado.setEstado(Fechado.getInstancia());
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.padroes.chamado.estado.Aberto;
 import org.padroes.chamado.estado.EmAtendimento;
 import org.padroes.chamado.estado.EstadoChamado;
+import org.padroes.chamado.estado.Fechado;
 import org.padroes.chamado.estado.Resolvido;
 
 class ChamadoTest {
@@ -52,7 +53,7 @@ class ChamadoTest {
     }
 
     @Test
-    void deveEvoluirFluxoFelizAteResolvido() {
+    void deveEvoluirFluxoFelizAteFechado() {
         Chamado chamado = new Chamado("CH-004", "Erro ao exportar relatorio", Aberto.getInstancia());
 
         chamado.iniciarAtendimento();
@@ -62,6 +63,10 @@ class ChamadoTest {
         chamado.resolver();
         assertSame(Resolvido.getInstancia(), chamado.getEstado());
         assertEquals("RESOLVIDO", chamado.getNomeEstado());
+
+        chamado.fechar();
+        assertSame(Fechado.getInstancia(), chamado.getEstado());
+        assertEquals("FECHADO", chamado.getNomeEstado());
     }
 
     @Test
@@ -74,9 +79,11 @@ class ChamadoTest {
         assertThrows(IllegalStateException.class, chamadoAtendimento::iniciarAtendimento);
         assertSame(EmAtendimento.getInstancia(), chamadoAtendimento.getEstado());
 
-        Chamado chamadoResolvido = new Chamado("CH-007", "Ajuste de permissao", Resolvido.getInstancia());
-        assertThrows(IllegalStateException.class, chamadoResolvido::fechar);
-        assertSame(Resolvido.getInstancia(), chamadoResolvido.getEstado());
+        Chamado chamadoFechado = new Chamado("CH-007", "Ajuste de permissao", Fechado.getInstancia());
+        assertThrows(IllegalStateException.class, chamadoFechado::iniciarAtendimento);
+        assertThrows(IllegalStateException.class, chamadoFechado::resolver);
+        assertThrows(IllegalStateException.class, chamadoFechado::fechar);
+        assertSame(Fechado.getInstancia(), chamadoFechado.getEstado());
     }
 
     private static class EstadoTeste implements EstadoChamado {
